@@ -1,7 +1,12 @@
+# --- Imports ---
+# --- Imports ---
 import streamlit as st
 from datetime import date
 # import gspread
 # from oauth2client.service_account import ServiceAccountCredentials
+
+
+
 
 st.set_page_config(
     page_title="Roofing Estimate Pro",
@@ -221,19 +226,7 @@ with st.container():
         else:
             roof_layers = 0
         decking = st.selectbox("Roof Decking Condition", ["Good", "Minor Repairs Needed", "Replace Decking"])
-    with col8:
         damage = st.text_area("Visible Damage (rot, leaks, mold)?", height=68)
-        # Damage photos uploader (after 'damage' input)
-        damage_photos = st.file_uploader(
-            "Upload photos of visible roof damage (if any):",
-            type=["jpg", "jpeg", "png"],
-            accept_multiple_files=True,
-            key="damage_photos"
-        )
-        if damage_photos:
-            st.markdown("**Photo preview:**")
-            for img in damage_photos:
-                st.image(img, width=200)
         special_equipment = st.radio("Special Equipment Required?", ["No", "Crane", "Scaffold", "Other"])
         # Special equipment photos uploader (after 'special_equipment' input)
         special_photos = st.file_uploader(
@@ -246,6 +239,27 @@ with st.container():
             st.markdown("**Photo preview:**")
             for img in special_photos:
                 st.image(img, width=200)
+    with col8:
+        # --- Manual Assessment UI grouped together at top of col8 ---
+        with st.container():
+            st.markdown("**Manual Assessment:** Use the sliders below to rate the % damage in each area.")
+            overall_damage = st.slider("Overall Roof Surface Damage (%)", 0, 100, 0, 5)
+            decking_damage = st.slider("Decking/Substrate Damage (%)", 0, 100, 0, 5)
+            flashing_damage = st.slider("Flashing/Edge Damage (%)", 0, 100, 0, 5)
+            gutter_damage = st.slider("Gutter/Downspout Damage (%)", 0, 100, 0, 5)
+            vent_damage = st.slider("Ventilation Obstruction/Damage (%)", 0, 100, 0, 5)
+            insulation_damage = st.slider("Insulation/Underlayment Damage (%)", 0, 100, 0, 5)
+            manual_factors = {
+                "Overall Roof Surface Damage (%)": overall_damage,
+                "Decking/Substrate Damage (%)": decking_damage,
+                "Flashing/Edge Damage (%)": flashing_damage,
+                "Gutter/Downspout Damage (%)": gutter_damage,
+                "Ventilation Obstruction/Damage (%)": vent_damage,
+                "Insulation/Underlayment Damage (%)": insulation_damage,
+            }
+            avg_damage_percent = sum(manual_factors.values()) / len(manual_factors)
+            st.info(f"Average assessed roof damage: **{avg_damage_percent:.1f}%**")
+            damage_percent = avg_damage_percent
 
     st.divider()
 
@@ -321,6 +335,9 @@ with st.container():
             addons += 500
         if flashing > 0:
             addons += flashing * 3
+        # Manual assessment: use damage_percent to add proportional surcharge
+        if damage_percent and damage_percent > 0:
+            addons += (damage_percent / 100) * 2500
         return addons
 
     def calc_total():
@@ -359,11 +376,22 @@ with st.container():
                         <li><b>Add-ons/Upgrades:</b> ${addons:,.2f}</li>
                         <li><b>Permit/Inspection Fees:</b> ${fees:,.2f}</li>
                         <li><b>Waste Disposal:</b> ${waste:,.2f}</li>
+""",
+                    unsafe_allow_html=True
+                )
+                # Add Manual Damage Surcharge line if applicable
+                if damage_percent and damage_percent > 0:
+                    st.markdown(
+                        f"<li><b>Manual Damage Surcharge:</b> <span style='color:#f6d365;'>${(damage_percent/100)*2500:,.2f}</span> <span style='font-size:0.95em; color:#fff;'>(Manual assessment, {damage_percent:.1f}% average damage)</span></li>",
+                        unsafe_allow_html=True
+                    )
+                st.markdown(
+                    """
                         <hr style="border: 1px solid #c9d6ec;">
                         <li><b>Total:</b> <span style="color:#f6d365; font-size:1.12rem">${total:,.2f}</span></li>
                     </ul>
                     </div>
-                    """,
+                    """.replace("${total:,.2f}", f"${total:,.2f}"),
                     unsafe_allow_html=True
                 )
             st.info(
