@@ -42,8 +42,8 @@ st.markdown(
         font-weight: 600 !important;
         font-size: 1.05rem !important;
     }
-    /* Make radio option labels dark and bold */
-    .stRadio > div[role="radiogroup"] label {
+    /* Make radio button options dark and bold */
+    .stRadio div[role="radiogroup"] > div {
         color: #222 !important;
         font-weight: 600 !important;
         font-size: 1.05rem !important;
