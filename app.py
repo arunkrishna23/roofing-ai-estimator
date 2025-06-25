@@ -12,9 +12,9 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    .stApp {background-color: #f3f5fa;}
+    .stApp {background-color: #eef3fa;}
     .main-card {
-        background: white;
+        background: #f7faff;
         border-radius: 20px;
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
         padding: 2rem 2.5rem 2rem 2.5rem;
@@ -26,6 +26,16 @@ st.markdown(
         margin-top: 1.5em;
         color: #273c75;
     }
+    .streamlit-expanderContent {
+        background-color: #f4f7fb !important;
+        color: #273c75 !important;
+        border-radius: 12px !important;
+        padding: 1.2em !important;
+    }
+    .streamlit-expanderHeader {
+        font-weight: 600 !important;
+        color: #2d98da !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -34,6 +44,7 @@ st.markdown(
 with st.container():
     st.markdown('<div class="main-card">', unsafe_allow_html=True)
     st.markdown("<h1 style='text-align: center; color: #2d98da;'>Roofing Estimate Pro</h1>", unsafe_allow_html=True)
+    st.image("https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", use_column_width=True, caption="Expert Roofing. Honest Estimates.")
     st.caption("Quick, reliable, and professional roof estimates.")
     st.divider()
 
@@ -225,18 +236,26 @@ with st.container():
         else:
             material, labor, addons, fees, waste, total = calc_total()
             st.success("✅ Estimate Ready!")
-            st.markdown(f"### 💰 **Total Estimate: ${total:,.2f}**")
+            st.markdown(
+                f"<div style='background-color:#eafaf1; color:#20bf6b; border-radius:10px; text-align:center; font-size:1.4rem; padding:0.7em 0; margin-bottom:10px;'><b>Total Estimate: ${total:,.2f}</b></div>",
+                unsafe_allow_html=True
+            )
             with st.expander("See Full Estimate Breakdown"):
                 st.markdown(
                     f"""
-                    - **Materials:** ${material:,.2f}
-                    - **Labor:** ${labor:,.2f}
-                    - **Add-ons/Upgrades:** ${addons:,.2f}
-                    - **Permit/Inspection Fees:** ${fees:,.2f}
-                    - **Waste Disposal:** ${waste:,.2f}
-                    - **---**
-                    - **Total:** ${total:,.2f}
-                    """
+                    <div style='color:#273c75; font-size: 1.05rem;'>
+                    <ul>
+                        <li><b>Materials:</b> ${material:,.2f}</li>
+                        <li><b>Labor:</b> ${labor:,.2f}</li>
+                        <li><b>Add-ons/Upgrades:</b> ${addons:,.2f}</li>
+                        <li><b>Permit/Inspection Fees:</b> ${fees:,.2f}</li>
+                        <li><b>Waste Disposal:</b> ${waste:,.2f}</li>
+                        <hr style="border: 1px solid #c9d6ec;">
+                        <li><b>Total:</b> <span style="color:#20bf6b; font-size:1.12rem">${total:,.2f}</span></li>
+                    </ul>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
                 )
             st.info(
                 "This is a preliminary estimate. Final pricing may vary based on onsite inspection and final measurements. Our team will reach out to confirm your requirements."
