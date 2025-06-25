@@ -25,3 +25,6 @@ __pycache__/
 # Ignore credentials or secret files (if any)
 *.env
 .env
+
+# Ignore Google Cloud credentials (keep them secret!)
+roofing-estimator-app-55e6691c472f.json

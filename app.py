@@ -1,5 +1,7 @@
 import streamlit as st
 from datetime import date
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 st.set_page_config(
     page_title="Roofing Estimate Pro",
@@ -210,6 +212,13 @@ with st.container():
         total = material + labor + addons + fees + waste
         return material, labor, addons, fees, waste, total
 
+    def save_to_sheet(row_data):
+        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+        creds = ServiceAccountCredentials.from_json_keyfile_name('roofing-estimator-app-55e6691c472f.json', scope)
+        client = gspread.authorize(creds)
+        sheet = client.open_by_key("1VtlMgjNNc2PgCxbtHn6Yi4Ovrjf0IJP69zijvogAi-Q").sheet1
+        sheet.append_row(row_data)
+
     if submit:
         if not cust_name or not cust_email or not address:
             st.warning("Please fill in your name, email, and project address to receive an estimate.")
@@ -232,6 +241,14 @@ with st.container():
             st.info(
                 "This is a preliminary estimate. Final pricing may vary based on onsite inspection and final measurements. Our team will reach out to confirm your requirements."
             )
+            row_data = [
+                cust_name, cust_email, cust_phone, address,
+                property_type, roof_type, stories, complexity, accessibility, str(install_date),
+                area, pitch, perimeter, edge_length, shingle, underlayment, insulation, gutter,
+                flashing, ventilation, removal_needed, roof_layers, decking, damage, special_equipment,
+                skylight, solar, ice_shield, notes, material, labor, addons, fees, waste, total
+            ]
+            save_to_sheet(row_data)
     st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Footer ---
