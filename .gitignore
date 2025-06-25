@@ -1,0 +1,27 @@
+# Ignore Python virtual environment
+venv/
+ENV/
+env/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Python cache and temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Ignore log files and OS-generated files
+*.log
+
+# Ignore any data output that shouldn’t be in repo
+*.sqlite3
+*.db
+
+# Ignore credentials or secret files (if any)
+*.env
+.env
