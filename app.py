@@ -36,6 +36,12 @@ st.markdown(
         font-weight: 600 !important;
         color: #2d98da !important;
     }
+    /* Make all widget labels dark and bold for better readability */
+    label, .stTextInput>label, .stSelectbox>label, .stNumberInput>label, .stRadio>label {
+        color: #222 !important;
+        font-weight: 600 !important;
+        font-size: 1.05rem !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -44,7 +50,7 @@ st.markdown(
 with st.container():
     st.markdown('<div class="main-card">', unsafe_allow_html=True)
     st.markdown("<h1 style='text-align: center; color: #2d98da;'>Roofing Estimate Pro</h1>", unsafe_allow_html=True)
-    st.image("https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", use_column_width=True, caption="Expert Roofing. Honest Estimates.")
+    st.image("https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", use_container_width=True, caption="Expert Roofing. Honest Estimates.")
     st.caption("Quick, reliable, and professional roof estimates.")
     st.divider()
 
