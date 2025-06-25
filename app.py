@@ -100,7 +100,7 @@ with st.container():
             roof_layers = 0
         decking = st.selectbox("Roof Decking Condition", ["Good", "Minor Repairs Needed", "Replace Decking"])
     with col8:
-        damage = st.text_area("Visible Damage (rot, leaks, mold)?", height=60)
+        damage = st.text_area("Visible Damage (rot, leaks, mold)?", height=68)
         # Damage photos uploader (after 'damage' input)
         damage_photos = st.file_uploader(
             "Upload photos of visible roof damage (if any):",
