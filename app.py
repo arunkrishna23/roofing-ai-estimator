@@ -42,6 +42,20 @@ st.markdown(
         font-weight: 600 !important;
         font-size: 1.05rem !important;
     }
+    /* Make radio option labels dark and bold */
+    .stRadio > div[role="radiogroup"] label {
+        color: #222 !important;
+        font-weight: 600 !important;
+        font-size: 1.05rem !important;
+    }
+    /* Make warning/info boxes stand out */
+    .stAlert, .stNotification, .stInfo {
+        background: #fffbe8 !important;
+        color: #ba6800 !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        border: 1px solid #ffd180 !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -237,7 +251,7 @@ with st.container():
         sheet.append_row(row_data)
 
     if submit:
-        if not cust_name or not cust_email or not address:
+        if not cust_name.strip() or not cust_email.strip() or not address.strip():
             st.warning("Please fill in your name, email, and project address to receive an estimate.")
         else:
             material, labor, addons, fees, waste, total = calc_total()
