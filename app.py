@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import date
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+# import gspread
+# from oauth2client.service_account import ServiceAccountCredentials
 
 st.set_page_config(
     page_title="Roofing Estimate Pro",
@@ -12,49 +12,136 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    .stApp {background-color: #eef3fa;}
+    .stApp {
+        background: url('https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .stApp::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: linear-gradient(120deg, rgba(246,211,101,0.12), rgba(32,191,107,0.13) 70%, rgba(45,51,70,0.09));
+        pointer-events: none;
+        z-index: 0;
+        animation: bgfloat 12s linear infinite alternate;
+    }
+    @keyframes bgfloat {
+        0% {background-position: 0% 50%;}
+        100% {background-position: 100% 50%;}
+    }
     .main-card {
-        background: #f7faff;
+        background: rgba(30, 42, 66, 0.96);
         border-radius: 20px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
         padding: 2rem 2.5rem 2rem 2.5rem;
         margin-top: 1rem;
+        color: #f4f6fa;
+        backdrop-filter: blur(9px) saturate(125%);
+        -webkit-backdrop-filter: blur(9px) saturate(125%);
+        border: 1.5px solid rgba(246, 211, 101, 0.08);
+        animation: fadeinup 1.4s cubic-bezier(.21,1.06,.81,.99);
+    }
+    @keyframes fadeinup {
+        0% {opacity:0; transform:translateY(32px);}
+        100% {opacity:1; transform:translateY(0);}
     }
     .section-header {
         font-size: 1.3rem;
-        font-weight: 600;
+        font-weight: 700;
         margin-top: 1.5em;
-        color: #273c75;
+        color: #f6d365;
+        letter-spacing: 0.03em;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        cursor: default;
+    }
+    .section-header:hover {
+        filter: brightness(1.24) drop-shadow(0 0 16px #f6d365ee);
+        transition: filter 0.25s;
     }
     .streamlit-expanderContent {
-        background-color: #f4f7fb !important;
-        color: #273c75 !important;
+        background-color: #22304e !important;
+        color: #fff !important;
         border-radius: 12px !important;
         padding: 1.2em !important;
     }
     .streamlit-expanderHeader {
-        font-weight: 600 !important;
-        color: #2d98da !important;
+        font-weight: 700 !important;
+        color: #f6d365 !important;
     }
-    /* Make all widget labels dark and bold for better readability */
+    /* Make all widget labels bold and bright for readability */
     label, .stTextInput>label, .stSelectbox>label, .stNumberInput>label, .stRadio>label {
-        color: #222 !important;
-        font-weight: 600 !important;
-        font-size: 1.05rem !important;
+        color: #fff !important;
+        font-weight: 700 !important;
+        font-size: 1.08rem !important;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.10);
     }
-    /* Make radio button options dark and bold */
+    /* Make radio button options bold and bright */
     .stRadio div[role="radiogroup"] > div {
-        color: #222 !important;
-        font-weight: 600 !important;
-        font-size: 1.05rem !important;
+        color: #f6d365 !important;
+        font-weight: 700 !important;
+        font-size: 1.08rem !important;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.15);
     }
     /* Make warning/info boxes stand out */
     .stAlert, .stNotification, .stInfo {
-        background: #fffbe8 !important;
-        color: #ba6800 !important;
+        background: #252a38 !important;
+        color: #ffd97a !important;
         border-radius: 10px !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         border: 1px solid #ffd180 !important;
+    }
+    h1.animated-header {
+        background: linear-gradient(90deg, #f6d365, #20bf6b, #f6d365);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.8rem;
+        font-weight: 900;
+        margin-bottom: 0.3em;
+        user-select: none;
+        position: relative;
+        overflow: hidden;
+    }
+    h1.animated-header::after {
+        content: "";
+        position: absolute;
+        top: 0; left: -75%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(120deg, rgba(255,255,255,0.18) 0%, rgba(246,211,101,0.35) 60%, rgba(255,255,255,0.12) 100%);
+        transform: skewX(-25deg);
+        animation: shine 2.8s infinite;
+    }
+    @keyframes shine {
+        0% { left: -75%; }
+        80% { left: 120%; }
+        100% { left: 120%; }
+    }
+    .stButton button:hover::after {
+        content: "⬇️";
+        margin-left: 12px;
+    }
+    /* Pulse animation for section headers on hover (already present, increase glow) */
+    .section-header:hover {
+        filter: brightness(1.24) drop-shadow(0 0 16px #f6d365ee);
+        transition: filter 0.25s;
+    }
+    /* Animate the main-card on page load */
+    .main-card {
+        animation: fadeinup 1.4s cubic-bezier(.21,1.06,.81,.99);
+    }
+    @keyframes fadeinup {
+        0% {opacity:0; transform:translateY(32px);}
+        100% {opacity:1; transform:translateY(0);}
+    }
+    /* Make the Contact Us footer button gently pulse */
+    .footer-glow-btn {
+        animation: pulseGlow 2.3s infinite alternate;
+        box-shadow: 0 2px 14px #f6d36566,0 2px 8px #20bf6b33;
+    }
+    @keyframes pulseGlow {
+        0% {box-shadow: 0 2px 14px #f6d36533,0 2px 4px #20bf6b22;}
+        100% {box-shadow: 0 4px 24px #f6d36599,0 2px 16px #20bf6b55;}
     }
     </style>
     """,
@@ -62,11 +149,13 @@ st.markdown(
 )
 
 with st.container():
-    st.markdown('<div class="main-card">', unsafe_allow_html=True)
-    st.markdown("<h1 style='text-align: center; color: #2d98da;'>Roofing Estimate Pro</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='animated-header' style='text-align: center;'>Roofing Estimate Pro</h1>", unsafe_allow_html=True)
     st.image("https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", use_container_width=True, caption="Expert Roofing. Honest Estimates.")
-    st.caption("Quick, reliable, and professional roof estimates.")
+    st.caption("Quick, reliable, and professional roof estimates.", unsafe_allow_html=True)
+    st.markdown("<style> .stCaption {color: #f9fafc !important;} </style>", unsafe_allow_html=True)
     st.divider()
+
+    st.markdown('<div class="main-card">', unsafe_allow_html=True)
 
     # 1. Property Details
     st.markdown('<div class="section-header">🏠 Property Details</div>', unsafe_allow_html=True)
@@ -243,12 +332,12 @@ with st.container():
         total = material + labor + addons + fees + waste
         return material, labor, addons, fees, waste, total
 
-    def save_to_sheet(row_data):
-        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-        creds = ServiceAccountCredentials.from_json_keyfile_name('roofing-estimator-app-55e6691c472f.json', scope)
-        client = gspread.authorize(creds)
-        sheet = client.open_by_key("1VtlMgjNNc2PgCxbtHn6Yi4Ovrjf0IJP69zijvogAi-Q").sheet1
-        sheet.append_row(row_data)
+    # def save_to_sheet(row_data):
+    #     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+    #     creds = ServiceAccountCredentials.from_json_keyfile_name('roofing-estimator-app-55e6691c472f.json', scope)
+    #     client = gspread.authorize(creds)
+    #     sheet = client.open_by_key("1VtlMgjNNc2PgCxbtHn6Yi4Ovrjf0IJP69zijvogAi-Q").sheet1
+    #     sheet.append_row(row_data)
 
     if submit:
         if not cust_name.strip() or not cust_email.strip() or not address.strip():
@@ -257,13 +346,13 @@ with st.container():
             material, labor, addons, fees, waste, total = calc_total()
             st.success("✅ Estimate Ready!")
             st.markdown(
-                f"<div style='background-color:#eafaf1; color:#20bf6b; border-radius:10px; text-align:center; font-size:1.4rem; padding:0.7em 0; margin-bottom:10px;'><b>Total Estimate: ${total:,.2f}</b></div>",
+                f"<div style='background-color:#2d3346; color:#f6d365; border-radius:10px; text-align:center; font-size:1.4rem; padding:0.7em 0; margin-bottom:10px;'><b>Total Estimate: ${total:,.2f}</b></div>",
                 unsafe_allow_html=True
             )
             with st.expander("See Full Estimate Breakdown"):
                 st.markdown(
                     f"""
-                    <div style='color:#273c75; font-size: 1.05rem;'>
+                    <div style='color:#fff; font-size: 1.05rem;'>
                     <ul>
                         <li><b>Materials:</b> ${material:,.2f}</li>
                         <li><b>Labor:</b> ${labor:,.2f}</li>
@@ -271,7 +360,7 @@ with st.container():
                         <li><b>Permit/Inspection Fees:</b> ${fees:,.2f}</li>
                         <li><b>Waste Disposal:</b> ${waste:,.2f}</li>
                         <hr style="border: 1px solid #c9d6ec;">
-                        <li><b>Total:</b> <span style="color:#20bf6b; font-size:1.12rem">${total:,.2f}</span></li>
+                        <li><b>Total:</b> <span style="color:#f6d365; font-size:1.12rem">${total:,.2f}</span></li>
                     </ul>
                     </div>
                     """,
@@ -287,7 +376,7 @@ with st.container():
                 flashing, ventilation, removal_needed, roof_layers, decking, damage, special_equipment,
                 skylight, solar, ice_shield, notes, material, labor, addons, fees, waste, total
             ]
-            save_to_sheet(row_data)
+            # save_to_sheet(row_data)
     st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Footer ---
@@ -295,6 +384,8 @@ st.markdown(
     """
     <div style="text-align: center; margin-top: 2em; color: #95a5a6;">
         Roofing Estimate Pro &copy; 2025 | Powered by Streamlit
+        <br>
+        <a href="mailto:roofing.ai.estimator@gmail.com" class="footer-glow-btn" style="display:inline-block;margin-top:1em;padding:0.5em 1.6em;background:linear-gradient(92deg,#f6d365,#20bf6b 65%);color:#212b36;font-weight:700;border-radius:22px;text-decoration:none;font-size:1.07rem;letter-spacing:0.01em;transition:box-shadow 0.3s;">Contact Us</a>
     </div>
     """,
     unsafe_allow_html=True,
