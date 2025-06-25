@@ -48,6 +48,17 @@ with st.container():
         )
         accessibility = st.selectbox("Roof Accessibility", ["Easy", "Moderate", "Difficult"])
         install_date = st.date_input("Preferred Start Date", value=date.today())
+    # Roof overview photos uploader (after 'complexity' input)
+    roof_overview_photos = st.file_uploader(
+        "Upload overall roof photos (optional):",
+        type=["jpg", "jpeg", "png"],
+        accept_multiple_files=True,
+        key="roof_overview_photos"
+    )
+    if roof_overview_photos:
+        st.markdown("**Photo preview:**")
+        for img in roof_overview_photos:
+            st.image(img, width=200)
 
     st.divider()
 
@@ -82,11 +93,37 @@ with st.container():
     col7, col8 = st.columns(2)
     with col7:
         removal_needed = st.radio("Remove Existing Roof?", ["Yes", "No"])
-        roof_layers = st.selectbox("Number of Roof Layers to Remove", [0, 1, 2, 3], index=1 if removal_needed == "Yes" else 0)
+        # Custom logic for roof_layers selectbox
+        if removal_needed == "Yes":
+            roof_layers = st.selectbox("Number of Roof Layers to Remove", [1, 2, 3], index=0)
+        else:
+            roof_layers = 0
         decking = st.selectbox("Roof Decking Condition", ["Good", "Minor Repairs Needed", "Replace Decking"])
     with col8:
         damage = st.text_area("Visible Damage (rot, leaks, mold)?", height=60)
+        # Damage photos uploader (after 'damage' input)
+        damage_photos = st.file_uploader(
+            "Upload photos of visible roof damage (if any):",
+            type=["jpg", "jpeg", "png"],
+            accept_multiple_files=True,
+            key="damage_photos"
+        )
+        if damage_photos:
+            st.markdown("**Photo preview:**")
+            for img in damage_photos:
+                st.image(img, width=200)
         special_equipment = st.radio("Special Equipment Required?", ["No", "Crane", "Scaffold", "Other"])
+        # Special equipment photos uploader (after 'special_equipment' input)
+        special_photos = st.file_uploader(
+            "Upload photos showing roof accessibility/complexity (optional):",
+            type=["jpg", "jpeg", "png"],
+            accept_multiple_files=True,
+            key="special_photos"
+        )
+        if special_photos:
+            st.markdown("**Photo preview:**")
+            for img in special_photos:
+                st.image(img, width=200)
 
     st.divider()
 
